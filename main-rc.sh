@@ -1,0 +1,12 @@
+export OS_USERNAME=""
+export OS_PROJECT_NAME=""
+export OS_PASSWORD=""
+export OS_AUTH_URL=""
+export OS_REGION_NAME=""
+
+export TF_VAR_TOR_OS_NETWORK_NAME=""
+export TF_VAR_TOR_OS_FLAVOR_NAME=""
+export TF_VAR_TOR_OS_IMAGE_NAME=""
+
+export TF_VAR_SSH_PUB_KEY_LOCATION=""
+export TF_VAR_TOR_RELAY_NODE_COUNT=""
