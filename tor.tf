@@ -36,6 +36,47 @@ resource "openstack_compute_secgroup_v2" "ssh_secgroup" {
         cidr = "0.0.0.0/0"
     }
 }
+resource "openstack_compute_secgroup_v2" "tor_or_1_secgroup" {
+    name = "allow-tor-or-1-all"
+    description = "Allow OR port 1"
+    rule {
+        ip_protocol = "tcp"
+        from_port = "9000"
+        to_port = "9000"
+        cidr = "0.0.0.0/0"
+    }
+}
+resource "openstack_compute_secgroup_v2" "tor_or_2_secgroup" {
+    name = "allow-tor-or-2-all"
+    description = "Allow OR port 2 "
+    rule {
+        ip_protocol = "tcp"
+        from_port = "9100"
+        to_port = "9100"
+        cidr = "0.0.0.0/0"
+    }
+}
+resource "openstack_compute_secgroup_v2" "tor_dir_1_secgroup" {
+    name = "allow-tor-dir-1-all"
+    description = "Allow Dir port 1 "
+    rule {
+        ip_protocol = "tcp"
+        from_port = "9001"
+        to_port = "9001"
+        cidr = "0.0.0.0/0"
+    }
+}
+resource "openstack_compute_secgroup_v2" "tor_dir_2_secgroup" {
+    name = "allow-tor-dir-2-all"
+    description = "Allow Dir port 2 "
+    rule {
+        ip_protocol = "tcp"
+        from_port = "9101"
+        to_port = "9101"
+        cidr = "0.0.0.0/0"
+    }
+}
+
 
 resource "openstack_compute_instance_v2" "tor_relay_nodes" {
   count             = "${var.TOR_RELAY_NODE_COUNT}"
@@ -44,6 +85,10 @@ resource "openstack_compute_instance_v2" "tor_relay_nodes" {
   flavor_name       = "${var.TOR_OS_FLAVOR_NAME}"
   key_pair          = "${openstack_compute_keypair_v2.tor_keypair.id}"
   security_groups   = ["${openstack_compute_secgroup_v2.ssh_secgroup.name}",
+                       "${openstack_compute_secgroup_v2.tor_or_1_secgroup.name}",
+                       "${openstack_compute_secgroup_v2.tor_or_2_secgroup.name}",
+                       "${openstack_compute_secgroup_v2.tor_dir_1_secgroup.name}",
+                       "${openstack_compute_secgroup_v2.tor_dir_2_secgroup.name}",
                         "default"
   ]
   network           = {
