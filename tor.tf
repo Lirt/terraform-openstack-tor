@@ -3,8 +3,11 @@ variable TOR_OS_FLAVOR_NAME {}
 variable TOR_OS_IMAGE_NAME {}
 
 variable SSH_PUB_KEY_LOCATION {}
+variable SSH_PRIV_KEY_LOCATION {}
 variable TOR_RELAY_NODE_COUNT {}
 
+variable ANSIBLE_RELAYOR_PLAYBOOK_PATH {}
+variable ANSIBLE_PLAYBOOK_USER {}
 
 provider "openstack" {
 }
@@ -102,7 +105,16 @@ resource "openstack_networking_floatingip_v2" "tor_relay_fips" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "tor_relay_assoc_fips" {
-  count = "${var.TOR_RELAY_NODE_COUNT}"
+  count       = "${var.TOR_RELAY_NODE_COUNT}"
   floating_ip = "${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)}"
   instance_id = "${element(openstack_compute_instance_v2.tor_relay_nodes.*.id, count.index)}"
+
+  provisioner "local-exec" {
+    command    = "echo '${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)}' >> ansible_inventory"
+    on_failure = "fail"
+  }
+
+  provisioner "local-exec" {
+    command = "sleep 200; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ${var.ANSIBLE_PLAYBOOK_USER} --private-key ${var.SSH_PRIV_KEY_LOCATION} -i '${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)},' ${var.ANSIBLE_RELAYOR_PLAYBOOK_PATH}"
+  }
 }
