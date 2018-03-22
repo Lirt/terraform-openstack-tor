@@ -1,14 +1,17 @@
-# Prerequisities
+# Intro
 
-To configure openstack nodes to Tor relays, bridges or exit nodes, prepare yaml configuration file for ansible-relayor module. Path to file can be specified in rc file as environment variable.
+This terraform role uses Openstack driver to bootstrap virtual instances and Ansible role [https://github.com/nusenu/ansible-relayor](https://github.com/nusenu/ansible-relayor) to install Tor on these nodes.
 
-Then you can install ansible-relayor from Galaxy by running command `ansible-galaxy install nusenu.relayor`.
+## Prerequisities
 
-Last step of this terraform repository is to create inventory from floating addresses given by openstack and running ansible-playbook.
+Install ansible-relayor role from Ansible Galaxy by running command `ansible-galaxy install nusenu.relayor`.
 
-```bash
-ansible-galaxy install kyungw00k.python27 nusenu.relayor
-```
+To configure openstack nodes to Tor relays, bridges or exit nodes, override all variables in file `main-rc.sh`.
+
+Example usage of variables is located in file `main-rc-example.sh`.
+
+
+## Limit network bandwidth or total bandwidth per month
 
 ## Flavor constraints
 
