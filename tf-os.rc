@@ -1,0 +1,5 @@
+export OS_USERNAME=""
+export OS_PROJECT_NAME=""
+export OS_PASSWORD=""
+export OS_AUTH_URL=""
+export OS_REGION_NAME=""
