@@ -2,7 +2,10 @@
 - hosts: all
   vars:
     ansible_python_interpreter: /usr/bin/python3.5
+    tor_AbuseEmailAddress: "abuse@example.com"
     tor_ContactInfo: "toradmin@example.com"
+    tor_ExitRelay: True
+    tor_exit_notice_file: "exit-notice/exit-notice.html"
     tor_signingkeylifetime_days: 180
   roles:
     - nusenu.relayor
