@@ -90,7 +90,7 @@ resource "openstack_compute_instance_v2" "tor_relay_nodes" {
 
 resource "openstack_networking_floatingip_v2" "tor_relay_fips" {
   count = "${var.TOR_RELAY_NODE_COUNT}"
-  pool  = "${var.EXT_NET_POOL}"
+  pool  = "${var.TOR_OS_EXT_NET_POOL}"
 }
 
 resource "openstack_compute_floatingip_associate_v2" "tor_relay_assoc_fips" {
