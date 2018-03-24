@@ -37,6 +37,9 @@ variable "TOR_EXIT_NICKNAME" {
 variable "ANSIBLE_RELAYOR_RELAY_PLAYBOOK_PATH" {
   default = "playbooks/relay-node.yml"
 }
+variable "ANSIBLE_RELAYOR_EXIT_PLAYBOOK_PATH" {
+  default = "playbooks/exit-node.yml"
+}
 variable "ANSIBLE_PLAYBOOK_USER" {
   default = "ubuntu"
 }
