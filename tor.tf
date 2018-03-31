@@ -123,7 +123,17 @@ resource "openstack_compute_floatingip_associate_v2" "tor_relay_assoc_fips" {
   instance_id = "${element(openstack_compute_instance_v2.tor_relay_nodes.*.id, count.index)}"
 
   provisioner "local-exec" {
-    command = "sleep 200; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ${var.ANSIBLE_PLAYBOOK_USER} --private-key ${var.SSH_PRIV_KEY_LOCATION} -i '${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)},' ${var.ANSIBLE_RELAYOR_RELAY_PLAYBOOK_PATH}"
+    environment {
+      ANSIBLE_HOST_KEY_CHECKING = "False"
+    }
+    command = <<EOF
+                sleep 200; \
+                ansible-playbook \
+                  --user ${var.ANSIBLE_PLAYBOOK_USER} \
+                  --private-key ${var.SSH_PRIV_KEY_LOCATION} \
+                  --inventory '${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)},' \
+                  ${var.ANSIBLE_RELAYOR_RELAY_PLAYBOOK_PATH}
+               EOF
   }
 }
 
@@ -133,6 +143,16 @@ resource "openstack_compute_floatingip_associate_v2" "tor_exit_assoc_fips" {
   instance_id = "${element(openstack_compute_instance_v2.tor_exit_nodes.*.id, count.index)}"
 
   provisioner "local-exec" {
-    command = "sleep 200; ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u ${var.ANSIBLE_PLAYBOOK_USER} --private-key ${var.SSH_PRIV_KEY_LOCATION} -i '${element(openstack_networking_floatingip_v2.tor_exit_fips.*.address, count.index)},' ${var.ANSIBLE_RELAYOR_EXIT_PLAYBOOK_PATH}"
+    environment {
+      ANSIBLE_HOST_KEY_CHECKING = "False"
+    }
+    command = <<EOF
+              sleep 200; \
+              ansible-playbook \
+                --user ${var.ANSIBLE_PLAYBOOK_USER} \
+                --private-key ${var.SSH_PRIV_KEY_LOCATION} \
+                --inventory '${element(openstack_networking_floatingip_v2.tor_exit_fips.*.address, count.index)},' \
+                ${var.ANSIBLE_RELAYOR_EXIT_PLAYBOOK_PATH}
+              EOF
   }
 }
