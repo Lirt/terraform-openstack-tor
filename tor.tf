@@ -40,7 +40,7 @@ resource "openstack_compute_secgroup_v2" "tor_or_1_secgroup" {
 }
 resource "openstack_compute_secgroup_v2" "tor_or_2_secgroup" {
     name = "tor-allow-or-2-all"
-    description = "Allow Tor OR port 2 "
+    description = "Allow Tor OR port 2"
     rule {
         ip_protocol = "tcp"
         from_port = "9100"
@@ -50,7 +50,7 @@ resource "openstack_compute_secgroup_v2" "tor_or_2_secgroup" {
 }
 resource "openstack_compute_secgroup_v2" "tor_dir_1_secgroup" {
     name = "tor-allow-dir-1-all"
-    description = "Allow Tor Directory port 1 "
+    description = "Allow Tor Directory port 1"
     rule {
         ip_protocol = "tcp"
         from_port = "9001"
@@ -60,11 +60,31 @@ resource "openstack_compute_secgroup_v2" "tor_dir_1_secgroup" {
 }
 resource "openstack_compute_secgroup_v2" "tor_dir_2_secgroup" {
     name = "tor-allow-dir-2-all"
-    description = "Allow Tor Directory port 2 "
+    description = "Allow Tor Directory port 2"
     rule {
         ip_protocol = "tcp"
         from_port = "9101"
         to_port = "9101"
+        cidr = "0.0.0.0/0"
+    }
+}
+resource "openstack_compute_secgroup_v2" "tor_dir_exit_1_secgroup" {
+    name = "tor-allow-dir-exit-1-all"
+    description = "Allow Tor Exit Directory port 1"
+    rule {
+        ip_protocol = "tcp"
+        from_port = "80"
+        to_port = "80"
+        cidr = "0.0.0.0/0"
+    }
+}
+resource "openstack_compute_secgroup_v2" "tor_dir_exit_2_secgroup" {
+    name = "tor-allow-dir-exit-2-all"
+    description = "Allow Tor Exit Directory port 2"
+    rule {
+        ip_protocol = "tcp"
+        from_port = "81"
+        to_port = "81"
         cidr = "0.0.0.0/0"
     }
 }
@@ -97,8 +117,8 @@ resource "openstack_compute_instance_v2" "tor_exit_nodes" {
   security_groups   = ["${openstack_compute_secgroup_v2.ssh_secgroup.name}",
                        "${openstack_compute_secgroup_v2.tor_or_1_secgroup.name}",
                        "${openstack_compute_secgroup_v2.tor_or_2_secgroup.name}",
-                       "${openstack_compute_secgroup_v2.tor_dir_1_secgroup.name}",
-                       "${openstack_compute_secgroup_v2.tor_dir_2_secgroup.name}",
+                       "${openstack_compute_secgroup_v2.tor_dir_exit_1_secgroup.name}",
+                       "${openstack_compute_secgroup_v2.tor_dir_exit_2_secgroup.name}",
                        "default"
   ]
   network           = {
