@@ -141,38 +141,24 @@ resource "openstack_compute_floatingip_associate_v2" "tor_relay_assoc_fips" {
   count       = "${var.TOR_RELAY_NODE_COUNT}"
   floating_ip = "${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)}"
   instance_id = "${element(openstack_compute_instance_v2.tor_relay_nodes.*.id, count.index)}"
-
-  provisioner "local-exec" {
-    environment {
-      ANSIBLE_HOST_KEY_CHECKING = "False"
-    }
-    command = <<EOF
-                sleep 200; \
-                ansible-playbook \
-                  --user ${var.ANSIBLE_PLAYBOOK_USER} \
-                  --private-key ${var.SSH_PRIV_KEY_LOCATION} \
-                  --inventory '${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)},' \
-                  ${var.ANSIBLE_RELAYOR_RELAY_PLAYBOOK_PATH}
-               EOF
-  }
 }
 
 resource "openstack_compute_floatingip_associate_v2" "tor_exit_assoc_fips" {
   count       = "${var.TOR_EXIT_NODE_COUNT}"
   floating_ip = "${element(openstack_networking_floatingip_v2.tor_exit_fips.*.address, count.index)}"
   instance_id = "${element(openstack_compute_instance_v2.tor_exit_nodes.*.id, count.index)}"
+}
 
+resource "null_resource" "provision-tor-relay-node" {
+  count       = "${var.TOR_RELAY_NODE_COUNT}"
   provisioner "local-exec" {
-    environment {
-      ANSIBLE_HOST_KEY_CHECKING = "False"
-    }
-    command = <<EOF
-              sleep 200; \
-              ansible-playbook \
-                --user ${var.ANSIBLE_PLAYBOOK_USER} \
-                --private-key ${var.SSH_PRIV_KEY_LOCATION} \
-                --inventory '${element(openstack_networking_floatingip_v2.tor_exit_fips.*.address, count.index)},' \
-                ${var.ANSIBLE_RELAYOR_EXIT_PLAYBOOK_PATH}
-              EOF
+    command = "sh ./provision_tor.sh ${var.SSH_PRIV_KEY_LOCATION} ${var.ANSIBLE_PLAYBOOK_USER} ${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)} ${var.ANSIBLE_RELAYOR_RELAY_PLAYBOOK_PATH}"
+  }
+}
+
+resource "null_resource" "provision-tor-exit-node" {
+  count       = "${var.TOR_EXIT_NODE_COUNT}"
+  provisioner "local-exec" {
+    command = "sh ./provision_tor.sh ${var.SSH_PRIV_KEY_LOCATION} ${var.ANSIBLE_PLAYBOOK_USER} ${element(openstack_networking_floatingip_v2.tor_exit_fips.*.address, count.index)} ${var.ANSIBLE_RELAYOR_EXIT_PLAYBOOK_PATH}"
   }
 }
