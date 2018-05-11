@@ -10,5 +10,10 @@
     tor_ExitNoticePage: True
     tor_PublishServerDescriptor: 0
     tor_signingkeylifetime_days: 180
+    tor_ports:
+      - orport: 9000
+        dirport: 80
+      - orport: 9100
+        dirport: 81
   roles:
     - nusenu.relayor
