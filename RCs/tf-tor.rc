@@ -1,21 +1,21 @@
 # Instance details
-export TF_VAR_TOR_OS_NETWORK_NAME=""
-export TF_VAR_TOR_OS_FLAVOR_NAME=""
-export TF_VAR_TOR_OS_IMAGE_NAME=""
-export TF_VAR_TOR_OS_EXT_NET_POOL=""
-export TF_VAR_TOR_OS_KEYPAIR_NAME=""
+export TF_VAR_tor_os_network_name=""
+export TF_VAR_tor_os_flavor_name=""
+export TF_VAR_tor_os_image_name=""
+export TF_VAR_tor_os_ext_net_pool=""
+export TF_VAR_tor_os_keypair_name=""
 
 # SSH Access details
-export TF_VAR_SSH_PUB_KEY_LOCATION=""
-export TF_VAR_SSH_PRIV_KEY_LOCATION=""
+export TF_VAR_ssh_pub_key_location=""
+export TF_VAR_ssh_priv_key_location=""
 
 # Tor node details
-export TF_VAR_TOR_RELAY_NODE_COUNT=""
-export TF_VAR_TOR_RELAY_NICKNAME=""
-export TF_VAR_TOR_EXIT_NODE_COUNT=""
-export TF_VAR_TOR_EXIT_NICKNAME=""
+export TF_VAR_tor_relay_node_count=""
+export TF_VAR_tor_relay_nickname=""
+export TF_VAR_tor_exit_node_count=""
+export TF_VAR_tor_exit_nickname=""
 
 # Playbook details
-export TF_VAR_ANSIBLE_RELAYOR_RELAY_PLAYBOOK_PATH=""
-export TF_VAR_ANSIBLE_RELAYOR_EXIT_PLAYBOOK_PATH=""
-export TF_VAR_ANSIBLE_PLAYBOOK_USER=""
+export TF_VAR_ansible_relayor_relay_playbook_path=""
+export TF_VAR_ansible_relayor_exit_playbook_path=""
+export TF_VAR_ansible_playbook_user=""
