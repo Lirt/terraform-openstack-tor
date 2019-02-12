@@ -35,24 +35,8 @@ variable "tor_os_keypair_name" {
   description = "Name of openstack keypair that will be created and assigned to all created tor instances."
 }
 
-variable "tor_relay_node_count" {
-  description = "Number of tor relay nodes to create."
-}
-
-variable "tor_exit_node_count" {
-  description = "Number of tor exit nodes to create."
-}
-
-variable "ansible_relayor_relay_playbook_path" {
-  description = "Path to ansible playbook used to provision tor relay nodes."
-}
-
-variable "ansible_relayor_exit_playbook_path" {
-  description = "Path to ansible playbook used to provision tor exit nodes."
-}
-
-variable "ansible_playbook_user" {
-  description = "User that will be used to connect to instances via ansible SSH. Usually depends on image and Linux/UNIX distribution."
+variable "tor_node_count" {
+  description = "Number of tor nodes to create."
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -70,12 +54,7 @@ variable "ssh_pub_key_location" {
   default = "./tor-ssh-key.pub"
 }
 
-variable "tor_relay_nickname" {
-  description = "Nickname for tor relay nodes. Two digit number will be appended to end of the name to keep them unique."
-  default = "tor-tf-relay"
-}
-
-variable "tor_exit_nickname" {
-  description = "Nickname for tor exit nodes. Two digit number will be appended to end of the name to keep them unique."
-  default = "tor-tf-exit"
+variable "tor_nickname" {
+  description = "Nickname for tor nodes. Two digit number will be appended to end of the name to keep them unique."
+  default = "tor-tf-node"
 }

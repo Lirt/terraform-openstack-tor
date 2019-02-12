@@ -90,9 +90,9 @@ resource "openstack_compute_secgroup_v2" "tor_dir_exit_2_secgroup" {
 }
 
 
-resource "openstack_compute_instance_v2" "tor_relay_nodes" {
-  count             = "${var.tor_relay_node_count}"
-  name              = "${format("${var.tor_relay_nickname}-%02d", count.index + 1)}"
+resource "openstack_compute_instance_v2" "tor_nodes" {
+  count             = "${var.tor_node_count}"
+  name              = "${format("${var.tor_nickname}-%02d", count.index + 1)}"
   image_id          = "${data.openstack_images_image_v2.image.id}"
   flavor_name       = "${var.tor_os_flavor_name}"
   key_pair          = "${openstack_compute_keypair_v2.tor_keypair.id}"
@@ -108,57 +108,14 @@ resource "openstack_compute_instance_v2" "tor_relay_nodes" {
   }
 }
 
-resource "openstack_compute_instance_v2" "tor_exit_nodes" {
-  count             = "${var.tor_exit_node_count}"
-  name              = "${format("${var.tor_exit_nickname}-%02d", count.index + 1)}"
-  image_id          = "${data.openstack_images_image_v2.image.id}"
-  flavor_name       = "${var.tor_os_flavor_name}"
-  key_pair          = "${openstack_compute_keypair_v2.tor_keypair.id}"
-  security_groups   = ["${openstack_compute_secgroup_v2.ssh_secgroup.name}",
-                       "${openstack_compute_secgroup_v2.tor_or_1_secgroup.name}",
-                       "${openstack_compute_secgroup_v2.tor_or_2_secgroup.name}",
-                       "${openstack_compute_secgroup_v2.tor_dir_exit_1_secgroup.name}",
-                       "${openstack_compute_secgroup_v2.tor_dir_exit_2_secgroup.name}",
-                       "default"
-  ]
-  network           = {
-    name = "${data.openstack_networking_network_v2.public_net.name}"
-  }
-}
 
-
-resource "openstack_networking_floatingip_v2" "tor_relay_fips" {
-  count = "${var.tor_relay_node_count}"
+resource "openstack_networking_floatingip_v2" "tor_fips" {
+  count = "${var.tor_node_count}"
   pool  = "${var.tor_os_ext_net_pool}"
 }
 
-resource "openstack_networking_floatingip_v2" "tor_exit_fips" {
-  count = "${var.tor_exit_node_count}"
-  pool  = "${var.tor_os_ext_net_pool}"
-}
-
-resource "openstack_compute_floatingip_associate_v2" "tor_relay_assoc_fips" {
-  count       = "${var.tor_relay_node_count}"
-  floating_ip = "${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)}"
-  instance_id = "${element(openstack_compute_instance_v2.tor_relay_nodes.*.id, count.index)}"
-}
-
-resource "openstack_compute_floatingip_associate_v2" "tor_exit_assoc_fips" {
-  count       = "${var.tor_exit_node_count}"
-  floating_ip = "${element(openstack_networking_floatingip_v2.tor_exit_fips.*.address, count.index)}"
-  instance_id = "${element(openstack_compute_instance_v2.tor_exit_nodes.*.id, count.index)}"
-}
-
-resource "null_resource" "provision-tor-relay-node" {
-  count       = "${var.tor_relay_node_count}"
-  provisioner "local-exec" {
-    command = "sh ./provision_tor.sh ${var.ssh_priv_key_location} ${var.ansible_playbook_user} ${element(openstack_networking_floatingip_v2.tor_relay_fips.*.address, count.index)} ${var.ansible_relayor_relay_playbook_path}"
-  }
-}
-
-resource "null_resource" "provision-tor-exit-node" {
-  count       = "${var.tor_exit_node_count}"
-  provisioner "local-exec" {
-    command = "sh ./provision_tor.sh ${var.ssh_priv_key_location} ${var.ansible_playbook_user} ${element(openstack_networking_floatingip_v2.tor_exit_fips.*.address, count.index)} ${var.ansible_relayor_exit_playbook_path}"
-  }
+resource "openstack_compute_floatingip_associate_v2" "tor_assoc_fips" {
+  count       = "${var.tor_node_count}"
+  floating_ip = "${element(openstack_networking_floatingip_v2.tor_fips.*.address, count.index)}"
+  instance_id = "${element(openstack_compute_instance_v2.tor_nodes.*.id, count.index)}"
 }
