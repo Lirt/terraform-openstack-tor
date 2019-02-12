@@ -1,4 +1,8 @@
-crash.log
-terraform.tfstate*
 .terraform
+terraform.tfstate
+terraform.tfvars
+*.tfstate*
+
 *.retry
+
+crash.log
